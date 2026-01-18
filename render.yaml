@@ -1,0 +1,28 @@
+# Render Blueprint for A2A Joke Generator Agent
+# This file configures automatic deployment on Render.com
+# 
+# To deploy:
+# 1. Push this repo to GitHub
+# 2. Go to https://dashboard.render.com/
+# 3. Click "New +" > "Blueprint"
+# 4. Connect your GitHub repo
+# 5. Render will automatically detect this file and configure your service
+
+services:
+  - type: web
+    name: a2a-joke-agent
+    runtime: python
+    plan: free  # Use the free tier
+    buildCommand: pip install -r requirements.txt
+    startCommand: python main.py
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false  # You'll set this manually in the Render dashboard
+      - key: HOST_URL
+        fromService:
+          name: a2a-joke-agent
+          type: web
+          property: host  # Automatically gets the Render URL
+      - key: PYTHON_VERSION
+        value: 3.11.0
+    healthCheckPath: /.well-known/agent.json
